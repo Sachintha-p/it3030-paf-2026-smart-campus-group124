@@ -32,12 +32,21 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    // Static method for error responses
+    // Static method for error responses (Message only)
     public static <T> ApiResponse<T> error(String message) {
         return ApiResponse.<T>builder()
                 .success(false)
                 .message(message)
                 .data(null)
+                .build();
+    }
+
+    // NEW: Static method for error responses with data (Fixes the GlobalExceptionHandler crash!)
+    public static <T> ApiResponse<T> error(String message, T data) {
+        return ApiResponse.<T>builder()
+                .success(false)
+                .message(message)
+                .data(data)
                 .build();
     }
 }
