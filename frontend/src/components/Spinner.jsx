@@ -1,20 +1,11 @@
 import React from 'react';
 
-const Spinner = ({ size = 'md', color = 'blue' }) => {
-  const sizeClass = {
-    sm: 'h-4 w-4 border-2',
-    md: 'h-8 w-8 border-4',
-    lg: 'h-12 w-12 border-4',
-  }[size];
-
-  const colorClass = {
-    blue: 'border-blue-500 border-t-transparent',
-    white: 'border-white border-t-transparent',
-  }[color];
-
+const Spinner = ({ size = 'md', text = 'Loading...' }) => {
+  const sizes = { sm: 'h-5 w-5', md: 'h-10 w-10', lg: 'h-16 w-16' };
   return (
-    <div className="flex justify-center items-center">
-      <div className={`animate-spin rounded-full ${sizeClass} ${colorClass}`}></div>
+    <div className="flex flex-col items-center justify-center py-20 gap-4">
+      <div className={`${sizes[size]} animate-spin rounded-full border-4 border-surface-border border-t-gold-500`} />
+      {text && <p className="text-slate-500 text-sm">{text}</p>}
     </div>
   );
 };
