@@ -4,15 +4,14 @@ import { useAuth } from '../context/AuthContext';
 import { Bell, LayoutDashboard, BookOpen, Calendar, Wrench, Users, ChevronDown, LogOut, User, Menu, X, ShieldCheck } from 'lucide-react';
 
 const Navbar = () => {
-  const { user, isAdmin, logout } = useAuth();
+  const { user, isAdmin } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
-  const [avatarError, setAvatarError] = useState(false);
 
   const handleLogout = () => {
-    logout();
+    window.location.href = '/login';
   };
 
   if (!user) return null;
@@ -34,7 +33,7 @@ const Navbar = () => {
 
   return (
     <nav className="sticky top-0 z-40 border-b border-surface-border bg-surface-card/80 backdrop-blur-md">
-      <div className="w-full px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
 
           {/* Logo */}
@@ -107,13 +106,8 @@ const Navbar = () => {
 
             {/* Profile */}
             <Link to="/profile" className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-surface-border transition-colors group">
-              {user.profilePicture && !avatarError ? (
-                <img
-                  src={user.profilePicture}
-                  alt={user.name}
-                  className="h-7 w-7 rounded-full ring-2 ring-gold-500/40 object-cover"
-                  onError={() => setAvatarError(true)}
-                />
+              {user.profilePicture ? (
+                <img src={user.profilePicture} alt={user.name} className="h-7 w-7 rounded-full ring-2 ring-gold-500/40" />
               ) : (
                 <div className="h-7 w-7 rounded-full bg-gold-500/20 border border-gold-500/40 flex items-center justify-center text-gold-400 font-semibold text-xs">
                   {user.name?.charAt(0)?.toUpperCase()}
