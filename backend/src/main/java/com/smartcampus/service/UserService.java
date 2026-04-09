@@ -9,4 +9,5 @@ public interface UserService {
     UserResponse getCurrentUser(String email);
     List<UserResponse> getAllUsers();
     UserResponse changeUserRole(Long id, Role role);
+    void deleteUser(Long id);
 }
