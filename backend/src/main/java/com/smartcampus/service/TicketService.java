@@ -4,7 +4,8 @@ import com.smartcampus.model.dto.CommentRequest;
 import com.smartcampus.model.dto.CommentResponse;
 import com.smartcampus.model.dto.TicketRequest;
 import com.smartcampus.model.dto.TicketResponse;
-import com.smartcampus.model.dto.TicketStatusUpdateRequest;
+import com.smartcampus.model.enums.TicketStatus;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -13,13 +14,14 @@ public interface TicketService {
     List<TicketResponse> getAllTickets();
     TicketResponse getTicketById(Long id);
     TicketResponse createTicket(TicketRequest request, String email);
-    TicketResponse assignTicket(Long id, Long technicianId);
-    TicketResponse updateTicketStatus(Long id, TicketStatusUpdateRequest request, String email);
-    void deleteTicket(Long id);
     
-    CommentResponse addComment(Long ticketId, CommentRequest request, String email);
-    CommentResponse updateComment(Long ticketId, Long commentId, CommentRequest request, String email);
-    void deleteComment(Long ticketId, Long commentId, String email);
+    // THE FIX: This line now exactly matches your Impl file (includes assignedToEmail)
+    TicketResponse updateTicketStatus(Long id, TicketStatus status, String resolutionNotes, String rejectionReason, String assignedToEmail);
     
-    TicketResponse uploadAttachments(Long ticketId, List<String> filePaths);
+    // Comment functionality
+    CommentResponse addComment(Long ticketId, CommentRequest request, String emailOrId);
+    List<CommentResponse> getTicketComments(Long ticketId);
+    
+    // Image upload functionality
+    TicketResponse uploadImages(Long ticketId, List<MultipartFile> files);
 }

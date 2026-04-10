@@ -1,5 +1,6 @@
 package com.smartcampus.model.entity;
 
+import com.smartcampus.model.enums.TicketCategory;
 import com.smartcampus.model.enums.TicketPriority;
 import com.smartcampus.model.enums.TicketStatus;
 import jakarta.persistence.*;
@@ -11,8 +12,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "tickets")
@@ -26,23 +25,23 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // THE FIX: Changed from "user_id" to "reported_by_id" to match your actual
+    // database column!
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reported_by_id", nullable = false)
+    private User user;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resource_id", nullable = false)
     private Resource resource;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reported_by_id", nullable = false)
-    private User reportedBy;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assigned_to_id")
     private User assignedTo;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String category;
-
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String description;
+    private TicketCategory category;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -52,18 +51,18 @@ public class Ticket {
     @Column(nullable = false)
     private TicketStatus status;
 
-    private String rejectionReason;
+    @Column(nullable = false, length = 1000)
+    private String description;
 
-    @Column(columnDefinition = "TEXT")
+    private String preferredContactDetails;
+
+    private String imageUrl1;
+    private String imageUrl2;
+    private String imageUrl3;
+
+    @Column(length = 1000)
     private String resolutionNotes;
-
-    private String preferredContact;
-
-    @ElementCollection
-    @CollectionTable(name = "ticket_attachments", joinColumns = @JoinColumn(name = "ticket_id"))
-    @Column(name = "file_path")
-    @Builder.Default
-    private List<String> attachments = new ArrayList<>();
+    private String rejectionReason;
 
     @CreationTimestamp
     @Column(updatable = false)

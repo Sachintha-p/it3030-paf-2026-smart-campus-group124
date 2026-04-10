@@ -18,19 +18,19 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<NotificationResponse>>> getMyNotifications(Authentication auth) {
-        return ResponseEntity.ok(ApiResponse.success("Notifications fetched", notificationService.getMyNotifications(auth.getName())));
+    public ResponseEntity<ApiResponse<List<NotificationResponse>>> getMyNotifications(Authentication authentication) {
+        return ResponseEntity.ok(ApiResponse.success(notificationService.getMyNotifications(authentication.getName())));
     }
 
     @PutMapping("/{id}/read")
-    public ResponseEntity<ApiResponse<Void>> markAsRead(@PathVariable Long id, Authentication auth) {
-        notificationService.markAsRead(id, auth.getName());
-        return ResponseEntity.ok(ApiResponse.success("Notification marked as read", null));
+    public ResponseEntity<ApiResponse<String>> markAsRead(@PathVariable Long id) {
+        notificationService.markAsRead(id);
+        return ResponseEntity.ok(ApiResponse.success("Marked as read"));
     }
 
     @PutMapping("/read-all")
-    public ResponseEntity<ApiResponse<Void>> markAllAsRead(Authentication auth) {
-        notificationService.markAllAsRead(auth.getName());
-        return ResponseEntity.ok(ApiResponse.success("All notifications marked as read", null));
+    public ResponseEntity<ApiResponse<String>> markAllAsRead(Authentication authentication) {
+        notificationService.markAllAsRead(authentication.getName());
+        return ResponseEntity.ok(ApiResponse.success("All marked as read"));
     }
 }

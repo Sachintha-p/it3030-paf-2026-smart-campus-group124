@@ -9,7 +9,14 @@ import java.util.List;
 
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
-    List<Ticket> findByReportedByIdOrderByCreatedAtDesc(Long reportedById);
+    
+    // Changed from reportedById to userId to match our Ticket.java entity
+    List<Ticket> findByUserIdOrderByCreatedAtDesc(Long userId);
+    
     List<Ticket> findByAssignedToIdOrderByCreatedAtDesc(Long assignedToId);
+    
     List<Ticket> findByStatus(TicketStatus status);
+
+    // We need this one so we can easily fetch tickets using the logged-in user's email!
+    List<Ticket> findByUserEmailOrderByCreatedAtDesc(String email);
 }

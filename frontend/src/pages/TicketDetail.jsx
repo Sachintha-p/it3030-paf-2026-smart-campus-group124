@@ -45,7 +45,7 @@ const TicketDetail = () => {
           </div>
         </dl>
       </div>
-      
+
       {/* Comments section would go here */}
     </div>
   );

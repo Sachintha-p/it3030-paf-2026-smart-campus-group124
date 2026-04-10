@@ -23,21 +23,46 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oauth2User = super.loadUser(userRequest);
         
-        // Extract info from Google
-        String email = oauth2User.getAttribute("email");
-        String name = oauth2User.getAttribute("name");
-        String sub = oauth2User.getAttribute("sub");
-        String picture = oauth2User.getAttribute("picture");
+        String registrationId = userRequest.getClientRegistration().getRegistrationId();
+        String email;
+        String name;
+        String providerId;
+        String picture;
+        Provider provider;
 
-        // TODO: Ensure user exists in DB, or auto-register logic
-        // For scaffold, we pretend to fetch or create
-        Optional<User> existingUser = userRepository.findByEmail(email);
+        if ("github".equalsIgnoreCase(registrationId)) {
+            email = oauth2User.getAttribute("email");
+            name = oauth2User.getAttribute("name");
+            providerId = String.valueOf(oauth2User.getAttribute("id"));
+            picture = oauth2User.getAttribute("avatar_url");
+            provider = Provider.GITHUB;
+            
+            // GitHub might return null for email if not public, simplified for this task
+            if (email == null) {
+                email = oauth2User.getAttribute("login") + "@github.com";
+            }
+        } else {
+            // Default to Google info extraction
+            email = oauth2User.getAttribute("email");
+            name = oauth2User.getAttribute("name");
+            providerId = oauth2User.getAttribute("sub");
+            picture = oauth2User.getAttribute("picture");
+            provider = Provider.GOOGLE;
+        }
+
+        // Ensure user exists in DB, or auto-register logic
+        Optional<User> existingUser = userRepository.findByProviderId(providerId);
+        if (existingUser.isEmpty()) {
+            // Check by email as fallback if providerId not found (e.g. user previously signed up with different provider but same email)
+            existingUser = userRepository.findByEmail(email);
+        }
+
         if (existingUser.isEmpty()) {
             User newUser = User.builder()
                 .email(email)
                 .name(name)
-                .provider(Provider.GOOGLE)
-                .providerId(sub)
+                .provider(provider)
+                .providerId(providerId)
                 .profilePicture(picture)
                 .role(Role.USER) // Default role
                 .build();

@@ -21,11 +21,14 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public UserResponse getCurrentUser(String email) {
-        log.info("Fetching current user for: {}", email);
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        
+    public UserResponse getCurrentUser(String emailOrId) {
+        log.info("Fetching current user for: {}", emailOrId);
+
+        // THE FIX: Added the Ghost User Google Provider fallback here too just in case!
+        User user = userRepository.findByProviderId(emailOrId)
+                .orElseGet(() -> userRepository.findByEmail(emailOrId)
+                        .orElseThrow(() -> new ResourceNotFoundException("User not found")));
+
         return mapToResponse(user);
     }
 
@@ -42,6 +45,14 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         user.setRole(role);
         return mapToResponse(userRepository.save(user));
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+        userRepository.delete(user);
+        log.info("Deleted user with id: {}", id);
     }
 
     private UserResponse mapToResponse(User user) {

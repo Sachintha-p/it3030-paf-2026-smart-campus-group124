@@ -45,6 +45,9 @@ public class ResourceServiceImpl implements ResourceService {
         resource.setCapacity(request.getCapacity());
         resource.setLocation(request.getLocation());
         
+        // THE FIX: Explicitly passing the status to the database
+        resource.setStatus(request.getStatus()); 
+        
         return mapToResponse(resourceRepository.save(resource));
     }
 
@@ -57,6 +60,9 @@ public class ResourceServiceImpl implements ResourceService {
         resource.setType(request.getType());
         resource.setCapacity(request.getCapacity());
         resource.setLocation(request.getLocation());
+        
+        // THE FIX: Ensure status updates correctly here too
+        resource.setStatus(request.getStatus()); 
         
         return mapToResponse(resourceRepository.save(resource));
     }
